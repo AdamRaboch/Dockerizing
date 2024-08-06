@@ -1,0 +1,28 @@
+services:
+  my-app:
+    image: adamrab/flask_contacts_app
+    ports:
+      - "5052:5052"
+    environment:
+      - DB_HOST=mysql
+      - DB_USER=root
+      - DB_PASSWORD=admin
+      - DB_NAME=contacts_app
+    volumes:
+      - mysql-pictures:/app
+  mysql:
+    image: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=admin
+    # ports not exposed to host machine
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8081:80"
+    
+volumes:
+  mysql-data:
+  mysql-pictures:
