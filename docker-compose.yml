@@ -1,3 +1,5 @@
+version: '3.7'
+
 services:
   my-app:
     image: adamrab/flask_contacts_app
@@ -10,13 +12,21 @@ services:
       - DB_NAME=contacts_app
     volumes:
       - mysql-pictures:/app
+    depends_on:
+      mysql:
+        condition: service_healthy
+
   mysql:
     image: mysql
     environment:
       - MYSQL_ROOT_PASSWORD=admin
-    # ports not exposed to host machine
     volumes:
       - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root --password=admin"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
