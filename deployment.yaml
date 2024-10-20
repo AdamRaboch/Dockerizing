@@ -1,0 +1,44 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: contacts-table-app
+  labels:
+    app: contacts-table-app
+spec:
+  replicas: 3                  # Adjust the number of replicas as needed
+  selector:
+    matchLabels:
+      app: contacts-table-app
+  template:
+    metadata:
+      labels:
+        app: contacts-table-app
+    spec:
+      containers:
+      - name: contacts-table-app
+        image: adamrab/contacts-table:latest  # Specify the correct image and tag
+        ports:
+        - containerPort: 5000         # Set to the port your app listens on
+        resources:                    # Optionally specify resource requests/limits
+          requests:
+            memory: "256Mi"
+            cpu: "500m"
+          limits:
+            memory: "512Mi"
+            cpu: "1"
+      imagePullSecrets:
+      - name: regcred  # Docker registry secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: contacts-table-service
+spec:
+  type: LoadBalancer               # Change to NodePort if you want to expose it locally
+  selector:
+    app: contacts-table-app
+  ports:
+    - protocol: TCP
+      port: 80                     # The port to expose
+      targetPort: 5000             # The port your app listens on
