@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect
 import os
+import mysql.connector
 
 # Retrieve the DATABASE_TYPE environment variable, defaulting to 'MYSQL' if not set
 db_to_use = os.getenv("DATABASE_TYPE", "MYSQL")
@@ -8,6 +9,12 @@ if db_to_use == "MYSQL":
     from data_sql import (get_contacts, findByNumber,
                           check_contact_exist, search_contacts,
                           create_contact, delete_contact, update_contact_in_db)
+    # Print environment variables for debugging
+    print("MYSQL_HOST:", os.getenv("MYSQL_HOST"))
+    print("MYSQL_USER:", os.getenv("MYSQL_USER"))
+    print("MYSQL_PASSWORD:", os.getenv("MYSQL_PASSWORD"))
+    print("MYSQL_DATABASE:", os.getenv("MYSQL_DATABASE"))
+    print("MYSQL_PORT:", os.getenv("MYSQL_PORT", 3306))
 
     # Set up MySQL connection using environment variables
     db = mysql.connector.connect(
@@ -32,7 +39,7 @@ def hello():
 def addContact():
     return render_template('addContactForm.html')
 
-# route to view the contact list
+# Route to view the contact list
 @app.route('/viewContacts')
 def viewContacts():
     print(get_contacts())
@@ -40,7 +47,7 @@ def viewContacts():
 
 @app.route('/createContact', methods=['POST'])
 def createContact():
-    # adding additional contact to the database (contacts_list)
+    # Adding additional contact to the database (contacts_list)
     fullname = request.form['fullname']
     email = request.form['email']
     phone = request.form['phone']
@@ -48,11 +55,11 @@ def createContact():
     photo = request.files['photo']
     if not check_contact_exist(fullname, email):
         if photo:
-            # create a name for the file to be saved
+            # Create a name for the file to be saved
             file_path = 'static/images/' + fullname + '.jpg'
-            # save the file in the server
+            # Save the file in the server
             photo.save(file_path)
-        # create a new contact
+        # Create a new contact
         create_contact(fullname, phone, email, gender, f'{fullname}.jpg')
     else:
         return render_template('addContactForm.html', message='Contact already exists')
@@ -77,7 +84,7 @@ def saveUpdatedContact(number):
     update_contact_in_db(number, name, phone, email, gender)
     return redirect('/viewContacts')
 
-# search route to filter the contact list according to the search criteria:
+# Search route to filter the contact list according to the search criteria:
 @app.route('/search', methods=['POST'])
 def search():
     search_name = request.form['search_name']
@@ -85,4 +92,4 @@ def search():
     return render_template('index.html', contacts=search_results)
 
 if __name__ == '__main__':
-    app.run(debug=True ,port=5052,  host='0.0.0.0')
+    app.run(debug=True, port=5052, host='0.0.0.0')
