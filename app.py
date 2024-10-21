@@ -10,7 +10,7 @@ logging.basicConfig(filename='/tmp/mysql_connection.log', level=logging.INFO,
 MYSQL_HOST = "mysql-service"
 MYSQL_USER = "root"
 MYSQL_PASSWORD = "admin"
-MYSQL_DATABASE = "yourdatabase"
+MYSQL_DATABASE = "mysql"
 MYSQL_PORT = 3306
 
 def connect_to_mysql():
