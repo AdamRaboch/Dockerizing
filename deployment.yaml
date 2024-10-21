@@ -18,18 +18,33 @@ spec:
       - name: contacts-table-app
         image: adamrab/contacts-table:latest  # Specify the correct image and tag
         ports:
-        - containerPort: 5000         # Set to the port your app listens on
+        - containerPort: 5000
         env:
         - name: MYSQL_HOST
-          value: mysql-service
+          valueFrom:
+            configMapKeyRef:
+              name: mysql-config
+              key: MYSQL_HOST
         - name: MYSQL_PORT
-          value: "3306"
+          valueFrom:
+            configMapKeyRef:
+              name: mysql-config
+              key: MYSQL_PORT
         - name: MYSQL_USER
-          value: "root"
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: MYSQL_USER
         - name: MYSQL_PASSWORD
-          value: "admin"
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: MYSQL_PASSWORD
         - name: MYSQL_DATABASE
-          value: "yourdatabase"
+          valueFrom:
+            configMapKeyRef:
+              name: mysql-config
+              key: MYSQL_DATABASE
         resources:                    # Optionally specify resource requests/limits
           requests:
             memory: "256Mi"
@@ -50,5 +65,5 @@ spec:
     app: contacts-table-app
   ports:
     - protocol: TCP
-      port: 80                     # The port to expose
-      targetPort: 5000             # The port your app listens on
+      port: 80
+      targetPort: 5000
