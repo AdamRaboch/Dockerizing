@@ -6,31 +6,21 @@ from data_sql import (get_contacts, findByNumber,
 
 app = Flask(__name__)
 
-# Hardcoded values for testing
-MYSQL_HOST = "mysql-service"
-MYSQL_USER = "root"
-MYSQL_PASSWORD = "admin"
-MYSQL_DATABASE = "yourdatabase"
-MYSQL_PORT = 3306
+# Print environment variables for debugging
+print("MYSQL_HOST:", os.getenv("MYSQL_HOST"))
+print("MYSQL_USER:", os.getenv("MYSQL_USER"))
+print("MYSQL_PASSWORD:", os.getenv("MYSQL_PASSWORD"))
+print("MYSQL_DATABASE:", os.getenv("MYSQL_DATABASE"))
+print("MYSQL_PORT:", os.getenv("MYSQL_PORT", 3306))
 
-# Print hardcoded values for debugging
-print("MYSQL_HOST:", MYSQL_HOST)
-print("MYSQL_USER:", MYSQL_USER)
-print("MYSQL_PASSWORD:", MYSQL_PASSWORD)
-print("MYSQL_DATABASE:", MYSQL_DATABASE)
-print("MYSQL_PORT:", MYSQL_PORT)
-
-# Set up MySQL connection using hardcoded values
+# Set up MySQL connection using environment variables
 db = mysql.connector.connect(
-    host=MYSQL_HOST,
-    user=MYSQL_USER,
-    password=MYSQL_PASSWORD,
-    database=MYSQL_DATABASE,
-    port=MYSQL_PORT
+    host=os.getenv("MYSQL_HOST"),
+    user=os.getenv("MYSQL_USER"),
+    password=os.getenv("MYSQL_PASSWORD"),
+    database=os.getenv("MYSQL_DATABASE"),
+    port=os.getenv("MYSQL_PORT", 3306)
 )
-
-# Initialize cursor for queries
-cursor = db.cursor()
 
 @app.route('/')
 def hello():
@@ -42,10 +32,8 @@ def addContact():
 
 @app.route('/viewContacts')
 def viewContacts():
-    cursor.execute("SELECT * FROM contacts")
-    result = cursor.fetchall()
-    print(result)
-    return render_template('index.html', contacts=result)
+    print(get_contacts())
+    return render_template('index.html', contacts=get_contacts())
 
 @app.route('/createContact', methods=['POST'])
 def createContact():
@@ -90,3 +78,4 @@ def search():
 
 if __name__ == '__main__':
     app.run(debug=True, port=5052, host='0.0.0.0')
+
