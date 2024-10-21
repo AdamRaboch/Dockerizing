@@ -1,43 +1,86 @@
+from flask import Flask, render_template, request, redirect
+import os
 import mysql.connector
-import logging
-import time
+from data_sql import (get_contacts, findByNumber,
+                      check_contact_exist, search_contacts,
+                      create_contact, delete_contact, update_contact_in_db)
 
-# Configure logging
-logging.basicConfig(filename='/tmp/mysql_connection.log', level=logging.INFO,
-                    format='%(asctime)s - %(levelname)s - %(message)s')
+app = Flask(__name__)
 
-# Hardcoded values for testing
-MYSQL_HOST = "mysql-service"
-MYSQL_USER = "root"
-MYSQL_PASSWORD = "admin"
-MYSQL_DATABASE = "mysql"
-MYSQL_PORT = 3306
+# Print environment variables for debugging
+print("MYSQL_HOST:", os.getenv("MYSQL_HOST"))
+print("MYSQL_USER:", os.getenv("MYSQL_USER"))
+print("MYSQL_PASSWORD:", os.getenv("MYSQL_PASSWORD"))
+print("MYSQL_DATABASE:", os.getenv("MYSQL_DATABASE"))
+print("MYSQL_PORT:", os.getenv("MYSQL_PORT", 3306))
 
-def connect_to_mysql():
-    try:
-        logging.info("Starting MySQL connection...")
-        db = mysql.connector.connect(
-            host=MYSQL_HOST,
-            user=MYSQL_USER,
-            password=MYSQL_PASSWORD,
-            database=MYSQL_DATABASE,
-            port=MYSQL_PORT
-        )
-        logging.info("Successfully connected to MySQL")
-        cursor = db.cursor()
-        cursor.execute("SHOW DATABASES")
-        databases = cursor.fetchall()
-        logging.info("Databases: %s", databases)
-    except mysql.connector.Error as err:
-        logging.error("Error: %s", err)
-    finally:
-        if 'db' in locals():
-            db.close()
-            logging.info("MySQL connection closed")
+# Ensure MySQL connection uses the right host
+db_host = os.getenv("MYSQL_HOST")
+if not db_host or db_host == 'localhost':
+    raise Exception("MySQL host is not set correctly!")
 
-if __name__ == "__main__":
-    while True:
-        connect_to_mysql()
-        time.sleep(60)  # Sleep for 60 seconds before next attempt
-        # Keep the container running
-        time.sleep(600)
+# Set up MySQL connection using environment variables
+db = mysql.connector.connect(
+    host=db_host,
+    user=os.getenv("MYSQL_USER"),
+    password=os.getenv("MYSQL_PASSWORD"),
+    database=os.getenv("MYSQL_DATABASE"),
+    port=os.getenv("MYSQL_PORT", 3306)
+)
+
+@app.route('/')
+def hello():
+    return redirect('/viewContacts')
+
+@app.route('/addContact', methods=['GET', 'POST'])
+def addContact():
+    return render_template('addContactForm.html')
+
+@app.route('/viewContacts')
+def viewContacts():
+    print(get_contacts())
+    return render_template('index.html', contacts=get_contacts())
+
+@app.route('/createContact', methods=['POST'])
+def createContact():
+    fullname = request.form['fullname']
+    email = request.form['email']
+    phone = request.form['phone']
+    gender = request.form['gender']
+    photo = request.files['photo']
+    if not check_contact_exist(fullname, email):
+        if photo:
+            file_path = 'static/images/' + fullname + '.jpg'
+            photo.save(file_path)
+        create_contact(fullname, phone, email, gender, f'{fullname}.jpg')
+    else:
+        return render_template('addContactForm.html', message='Contact already exists')
+    return redirect('/viewContacts')
+
+@app.route('/deleteContact/<number>')
+def deleteContact(number):
+    delete_contact(number)
+    return redirect('/viewContacts')
+
+@app.route('/editContact/<number>')
+def editContact(number):
+    contact = findByNumber(number)
+    return render_template('editContactForm.html', contact=contact)
+
+@app.route('/saveUpdatedContact/<number>', methods=['POST'])
+def saveUpdatedContact(number):
+    name = request.form['fullname']
+    phone = request.form['phone']
+    email = request.form['email']
+    gender = request.form['gender']
+    update_contact_in_db(number, name, phone, email, gender)
+    return redirect('/viewContacts')
+
+@app.route('/search', methods=['POST'])
+def search():
+    search_name = request.form['search_name']
+    search_results = search_contacts(search_name)
+    return render_template('index.html', contacts=search_results)
+
+if __name__ == '__main__':
+    app.run(debug=True, port=5052, host='0.0.0.0')
