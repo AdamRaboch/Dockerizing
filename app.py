@@ -29,6 +29,9 @@ db = mysql.connector.connect(
     port=MYSQL_PORT
 )
 
+# Initialize cursor for queries
+cursor = db.cursor()
+
 @app.route('/')
 def hello():
     return redirect('/viewContacts')
@@ -39,8 +42,10 @@ def addContact():
 
 @app.route('/viewContacts')
 def viewContacts():
-    print(get_contacts())
-    return render_template('index.html', contacts=get_contacts())
+    cursor.execute("SELECT * FROM contacts")
+    result = cursor.fetchall()
+    print(result)
+    return render_template('index.html', contacts=result)
 
 @app.route('/createContact', methods=['POST'])
 def createContact():
