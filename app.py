@@ -14,9 +14,14 @@ print("MYSQL_PASSWORD:", os.getenv("MYSQL_PASSWORD"))
 print("MYSQL_DATABASE:", os.getenv("MYSQL_DATABASE"))
 print("MYSQL_PORT:", os.getenv("MYSQL_PORT", 3306))
 
+# Ensure MySQL connection uses the right host
+db_host = os.getenv("MYSQL_HOST")
+if not db_host or db_host == 'localhost':
+    raise Exception("MySQL host is not set correctly!")
+
 # Set up MySQL connection using environment variables
 db = mysql.connector.connect(
-    host=os.getenv("MYSQL_HOST"),
+    host=db_host,
     user=os.getenv("MYSQL_USER"),
     password=os.getenv("MYSQL_PASSWORD"),
     database=os.getenv("MYSQL_DATABASE"),
