@@ -5,7 +5,7 @@ metadata:
   labels:
     app: contacts-table-app
 spec:
-  replicas: 3                  # Adjust the number of replicas as needed
+  replicas: 1                 # Adjust the number of replicas as needed
   selector:
     matchLabels:
       app: contacts-table-app
