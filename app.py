@@ -1,6 +1,9 @@
 from flask import Flask, render_template, request, redirect
 import os
 import mysql.connector
+from data_sql import (get_contacts, findByNumber,
+                      check_contact_exist, search_contacts,
+                      create_contact, delete_contact, update_contact_in_db)
 
 app = Flask(__name__)
 
