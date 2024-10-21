@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, redirect
-import os
 import mysql.connector
 from data_sql import (get_contacts, findByNumber,
                       check_contact_exist, search_contacts,
@@ -7,25 +6,27 @@ from data_sql import (get_contacts, findByNumber,
 
 app = Flask(__name__)
 
-# Print environment variables for debugging
-print("MYSQL_HOST:", os.getenv("MYSQL_HOST"))
-print("MYSQL_USER:", os.getenv("MYSQL_USER"))
-print("MYSQL_PASSWORD:", os.getenv("MYSQL_PASSWORD"))
-print("MYSQL_DATABASE:", os.getenv("MYSQL_DATABASE"))
-print("MYSQL_PORT:", os.getenv("MYSQL_PORT", 3306))
+# Hardcoded values for testing
+MYSQL_HOST = "mysql-service"
+MYSQL_USER = "root"
+MYSQL_PASSWORD = "admin"
+MYSQL_DATABASE = "yourdatabase"
+MYSQL_PORT = 3306
 
-# Ensure MySQL connection uses the right host
-db_host = os.getenv("MYSQL_HOST")
-if not db_host or db_host == 'localhost':
-    raise Exception("MySQL host is not set correctly!")
+# Print hardcoded values for debugging
+print("MYSQL_HOST:", MYSQL_HOST)
+print("MYSQL_USER:", MYSQL_USER)
+print("MYSQL_PASSWORD:", MYSQL_PASSWORD)
+print("MYSQL_DATABASE:", MYSQL_DATABASE)
+print("MYSQL_PORT:", MYSQL_PORT)
 
-# Set up MySQL connection using environment variables
+# Set up MySQL connection using hardcoded values
 db = mysql.connector.connect(
-    host=db_host,
-    user=os.getenv("MYSQL_USER"),
-    password=os.getenv("MYSQL_PASSWORD"),
-    database=os.getenv("MYSQL_DATABASE"),
-    port=os.getenv("MYSQL_PORT", 3306)
+    host=MYSQL_HOST,
+    user=MYSQL_USER,
+    password=MYSQL_PASSWORD,
+    database=MYSQL_DATABASE,
+    port=MYSQL_PORT
 )
 
 @app.route('/')
