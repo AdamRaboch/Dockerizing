@@ -1,8 +1,9 @@
 import mysql.connector
 import logging
+import time
 
 # Configure logging
-logging.basicConfig(filename='mysql_connection.log', level=logging.INFO,
+logging.basicConfig(filename='/tmp/mysql_connection.log', level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Hardcoded values for testing
@@ -30,9 +31,13 @@ def connect_to_mysql():
     except mysql.connector.Error as err:
         logging.error("Error: %s", err)
     finally:
-        if db:
+        if 'db' in locals():
             db.close()
             logging.info("MySQL connection closed")
 
 if __name__ == "__main__":
-    connect_to_mysql()
+    while True:
+        connect_to_mysql()
+        time.sleep(60)  # Sleep for 60 seconds before next attempt
+        # Keep the container running
+        time.sleep(600)
