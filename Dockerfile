@@ -11,4 +11,4 @@ ADD . /app
 RUN pip install -r requirements.txt
 
 # command to run on container start
-ENTRYPOINT ["sh", "-c", "sleep 10 && python datasql.py && python app.py"]
+ENTRYPOINT ["sh", "-c", "sleep 10 && python data_sql.py && python app.py"]
