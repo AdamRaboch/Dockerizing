@@ -46,9 +46,6 @@ spec:
               name: mysql-config
               key: MYSQL_DATABASE
         resources:                    # Optionally specify resource requests/limits
-          limits:
-            memory: "1Gi"
-            cpu: "2"
           requests:
             memory: "512Mi"
             cpu: "1"
