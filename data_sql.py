@@ -9,15 +9,15 @@ from db_functions import (get_contacts, findByNumber,
 app = Flask(__name__)
 
 # Configure logging
-logging.basicConfig(filename='/tmp/app.log', level=logging.INFO,
+logging.basicConfig(filename='/tmp/app.log', level=logging.DEBUG,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Print environment variables for debugging
-logging.info("MYSQL_HOST: %s", os.getenv("MYSQL_HOST"))
-logging.info("MYSQL_USER: %s", os.getenv("MYSQL_USER"))
-logging.info("MYSQL_PASSWORD: %s", os.getenv("MYSQL_PASSWORD"))
-logging.info("MYSQL_DATABASE: %s", os.getenv("MYSQL_DATABASE"))
-logging.info("MYSQL_PORT: %s", os.getenv("MYSQL_PORT", 3306))
+logging.debug("MYSQL_HOST: %s", os.getenv("MYSQL_HOST"))
+logging.debug("MYSQL_USER: %s", os.getenv("MYSQL_USER"))
+logging.debug("MYSQL_PASSWORD: %s", os.getenv("MYSQL_PASSWORD"))
+logging.debug("MYSQL_DATABASE: %s", os.getenv("MYSQL_DATABASE"))
+logging.debug("MYSQL_PORT: %s", os.getenv("MYSQL_PORT", 3306))
 
 # Ensure MySQL connection uses the right host
 db_host = os.getenv("MYSQL_HOST")
@@ -57,10 +57,15 @@ except mysql.connector.Error as err:
 
 @app.route('/')
 def hello():
+    logging.info("Redirecting to /viewContacts")
     return redirect('/viewContacts')
 
 @app.route('/addContact', methods=['GET', 'POST'])
 def addContact():
+    if request.method == 'POST':
+        logging.info("Received POST request to add contact")
+    else:
+        logging.info("Received GET request to display add contact form")
     return render_template('addContactForm.html')
 
 @app.route('/viewContacts')
@@ -81,6 +86,7 @@ def createContact():
         if photo:
             file_path = 'static/images/' + fullname + '.jpg'
             photo.save(file_path)
+            logging.info("Photo saved for contact: %s", fullname)
         create_contact(fullname, phone, email, gender, f'{fullname}.jpg')
         logging.info("Contact created: %s", fullname)
     else:
@@ -114,7 +120,7 @@ def saveUpdatedContact(number):
 def search():
     search_name = request.form['search_name']
     search_results = search_contacts(search_name)
-    logging.info("Search performed for: %s, results: %s", search_name, search_results)
+    logging.info("Search performed for: %s, results count: %d", search_name, len(search_results))
     return render_template('index.html', contacts=search_results)
 
 if __name__ == '__main__':
