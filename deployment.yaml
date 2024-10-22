@@ -47,11 +47,11 @@ spec:
               key: MYSQL_DATABASE
         resources:                    # Specify resource requests/limits
           requests:
-            memory: "2Gi"             # Requesting 2 GiB of memory
-            cpu: "2"                  # Requesting 2 CPU cores
+            memory: "1Gi"             # Requesting 2 GiB of memory
+            cpu: "1"                  # Requesting 2 CPU cores
           limits:
-            memory: "4Gi"             # Setting limit to 4 GiB of memory
-            cpu: "4"   
+            memory: "2Gi"             # Setting limit to 4 GiB of memory
+            cpu: "2"   
         readinessProbe:
           httpGet:
             path: /
