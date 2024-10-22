@@ -1,14 +1,11 @@
 # data_sql.py
-# Only keep necessary imports, possibly functions
 import os
 import mysql.connector
 import logging
-
-# If data_sql.py is still needed, import from db_functions
+from flask import Flask, render_template, request, redirect
 from db_functions import (get_contacts, findByNumber,
                           check_contact_exist, search_contacts,
                           create_contact, delete_contact, update_contact_in_db)
-
 
 app = Flask(__name__)
 
@@ -29,6 +26,7 @@ if not db_host or db_host == 'localhost':
     logging.error("MySQL host is not set correctly!")
     raise Exception("MySQL host is not set correctly!")
 
+# Establish MySQL connection
 try:
     # Set up MySQL connection using environment variables
     db = mysql.connector.connect(
@@ -40,7 +38,7 @@ try:
     )
     logging.info("Successfully connected to MySQL")
 except mysql.connector.Error as err:
-    logging.error("Error: %s", err)
+    logging.error("Error connecting to MySQL: %s", err)
     raise
 
 @app.route('/')
