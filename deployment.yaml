@@ -45,10 +45,13 @@ spec:
             configMapKeyRef:
               name: mysql-config
               key: MYSQL_DATABASE
-        resources:                    # Optionally specify resource requests/limits
+        resources:                    # Specify resource requests/limits
           requests:
-            memory: "512Mi"
-            cpu: "1"
+            memory: "2Gi"             # Requesting 2 GiB of memory
+            cpu: "2"                  # Requesting 2 CPU cores
+          limits:
+            memory: "4Gi"             # Setting limit to 4 GiB of memory
+            cpu: "4"   
         readinessProbe:
           httpGet:
             path: /
