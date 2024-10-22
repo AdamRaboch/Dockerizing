@@ -1,20 +1,14 @@
-# Base image of Python with OS Debian slim (meaning small one)
+# base image of python with OS debian slim (meaning small one)
 FROM python:3.12-slim
 
-# Set the working directory in the container
+# set the working directory in the container
 WORKDIR /app
 
-# Copy the dependencies file to the working directory
+# copy the dependencies file to the working directory
 ADD . /app
 
-# Install dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+# install dependencies
+RUN pip install -r requirements.txt
 
-# Command to run on container start
-ENTRYPOINT ["sh", "-c", "
-    # Wait for MySQL to be ready
-    sleep 10;  # Wait for 10 seconds before checking
-    python data_sql.py
-    sleep 5;   # Wait for 5 seconds after data_sql.py before starting the app
-    python app.py
-"]
+# command to run on container start
+ENTRYPOINT ["sh", "-c", "sleep 10 && python data_sql.py && sleep 5 && python app.py"]
