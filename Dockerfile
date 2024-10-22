@@ -11,16 +11,10 @@ ADD . /app
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Command to run on container start
-ENTRYPOINT sh -c "
+ENTRYPOINT ["sh", "-c", "
     # Wait for MySQL to be ready
-    for i in {1..10}; do
-        if python data_sql.py; then
-            break;
-        else
-            sleep $((i * 5));
-        fi
-    done;
-
-    # Start the Flask app
+    sleep 10;  # Wait for 10 seconds before checking
+    python data_sql.py
+    sleep 5;   # Wait for 5 seconds after data_sql.py before starting the app
     python app.py
-"
+"]
