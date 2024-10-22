@@ -12,19 +12,22 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # command to run on container start
 ENTRYPOINT ["sh", "-c", "
+    # Create or clear the log file
+    : > /tmp/app.log;
+
     # Wait for MySQL to be ready
-    echo 'Waiting for MySQL to be ready...'
+    echo 'Waiting for MySQL to be ready...' | tee -a /tmp/app.log
     for i in {1..10}; do
-        if python data_sql.py; then
-            echo 'MySQL is ready!'
+        if python data_sql.py >> /tmp/app.log 2>&1; then
+            echo 'MySQL is ready!' | tee -a /tmp/app.log
             break
         else
-            echo 'MySQL not ready yet, retrying in $((i * 5)) seconds...'
+            echo 'MySQL not ready yet, retrying in $((i * 5)) seconds...' | tee -a /tmp/app.log
             sleep $((i * 5))
         fi
     done;
 
     # Start the Flask app
-    echo 'Starting the Flask app...'
-    python app.py
+    echo 'Starting the Flask app...' | tee -a /tmp/app.log
+    python app.py >> /tmp/app.log 2>&1
 "]
