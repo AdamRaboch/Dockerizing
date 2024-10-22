@@ -1,18 +1,23 @@
-from flask import Flask, render_template, request, redirect
-import os
 import mysql.connector
+import logging
+import os
+from flask import Flask, render_template, request, redirect
 from data_sql import (get_contacts, findByNumber,
                       check_contact_exist, search_contacts,
                       create_contact, delete_contact, update_contact_in_db)
 
 app = Flask(__name__)
 
+# Configure logging
+logging.basicConfig(filename='/tmp/mysql_connection.log', level=logging.INFO,
+                    format='%(asctime)s - %(levelname)s - %(message)s')
+
 # Print environment variables for debugging
-print("MYSQL_HOST:", os.getenv("MYSQL_HOST"))
-print("MYSQL_USER:", os.getenv("MYSQL_USER"))
-print("MYSQL_PASSWORD:", os.getenv("MYSQL_PASSWORD"))
-print("MYSQL_DATABASE:", os.getenv("MYSQL_DATABASE"))
-print("MYSQL_PORT:", os.getenv("MYSQL_PORT", 3306))
+logging.info("MYSQL_HOST: %s", os.getenv("MYSQL_HOST"))
+logging.info("MYSQL_USER: %s", os.getenv("MYSQL_USER"))
+logging.info("MYSQL_PASSWORD: %s", os.getenv("MYSQL_PASSWORD"))
+logging.info("MYSQL_DATABASE: %s", os.getenv("MYSQL_DATABASE"))
+logging.info("MYSQL_PORT: %s", os.getenv("MYSQL_PORT", 3306))
 
 # Ensure MySQL connection uses the right host
 db_host = os.getenv("MYSQL_HOST")
@@ -20,13 +25,17 @@ if not db_host or db_host == 'localhost':
     raise Exception("MySQL host is not set correctly!")
 
 # Set up MySQL connection using environment variables
-db = mysql.connector.connect(
-    host=db_host,
-    user=os.getenv("MYSQL_USER"),
-    password=os.getenv("MYSQL_PASSWORD"),
-    database=os.getenv("MYSQL_DATABASE"),
-    port=os.getenv("MYSQL_PORT", 3306)
-)
+try:
+    db = mysql.connector.connect(
+        host=db_host,
+        user=os.getenv("MYSQL_USER"),
+        password=os.getenv("MYSQL_PASSWORD"),
+        database=os.getenv("MYSQL_DATABASE"),
+        port=os.getenv("MYSQL_PORT", 3306)
+    )
+    logging.info("Successfully connected to MySQL")
+except mysql.connector.Error as err:
+    logging.error("Error: %s", err)
 
 @app.route('/')
 def hello():
@@ -38,8 +47,10 @@ def addContact():
 
 @app.route('/viewContacts')
 def viewContacts():
-    print(get_contacts())
-    return render_template('index.html', contacts=get_contacts())
+    logging.info("Fetching contacts...")
+    contacts = get_contacts()
+    logging.info("Contacts fetched: %s", contacts)
+    return render_template('index.html', contacts=contacts)
 
 @app.route('/createContact', methods=['POST'])
 def createContact():
