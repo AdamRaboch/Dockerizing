@@ -16,18 +16,18 @@ ENTRYPOINT ["sh", "-c", "
     : > /tmp/app.log;
 
     # Wait for MySQL to be ready
-    echo 'Waiting for MySQL to be ready...' | tee -a /tmp/app.log
+    echo 'Waiting for MySQL to be ready...' >> /tmp/app.log;
     for i in {1..10}; do
         if python data_sql.py >> /tmp/app.log 2>&1; then
-            echo 'MySQL is ready!' | tee -a /tmp/app.log
-            break
+            echo 'MySQL is ready!' >> /tmp/app.log;
+            break;
         else
-            echo 'MySQL not ready yet, retrying in $((i * 5)) seconds...' | tee -a /tmp/app.log
-            sleep $((i * 5))
+            echo 'MySQL not ready yet, retrying in $((i * 5)) seconds...' >> /tmp/app.log;
+            sleep $((i * 5));
         fi
     done;
 
     # Start the Flask app
-    echo 'Starting the Flask app...' | tee -a /tmp/app.log
+    echo 'Starting the Flask app...' >> /tmp/app.log;
     python app.py >> /tmp/app.log 2>&1
 "]
