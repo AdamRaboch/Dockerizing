@@ -47,8 +47,8 @@ spec:
               key: MYSQL_DATABASE
         resources:                    # Optionally specify resource requests/limits
           requests:
-            memory: "256Mi"
-            cpu: "500m"
+            memory: "1Gi"
+            cpu: "2"
           limits:
             memory: "512Mi"
             cpu: "1"
