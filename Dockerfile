@@ -13,7 +13,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # command to run on container start
 ENTRYPOINT ["sh", "-c", "
     # Create or clear the log file
-    : > /tmp/app.log;
+    echo '' > /tmp/app.log;
 
     # Wait for MySQL to be ready
     echo 'Waiting for MySQL to be ready...' >> /tmp/app.log;
