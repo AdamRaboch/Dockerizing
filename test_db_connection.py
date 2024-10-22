@@ -7,18 +7,19 @@ logging.basicConfig(filename='/tmp/db_test.log', level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 db_host = os.getenv("MYSQL_HOST")
-db_name = os.getenv("MYSQL_DATABASE")  # Assuming this is the name of your database
+
 try:
-    # Connect to MySQL database
+    # Establish the connection
     db = mysql.connector.connect(
         host=db_host,
         user=os.getenv("MYSQL_USER"),
         password=os.getenv("MYSQL_PASSWORD"),
-        database=db_name,  # Specify the database
-        port=os.getenv("MYSQL_PORT", 3306)
+        port=os.getenv("MYSQL_PORT", 3306),
+        database="contacts_app"  # Ensure it connects to the correct database
     )
     logging.info("Successfully connected to MySQL at %s:%s", db_host, os.getenv("MYSQL_PORT", 3306))
-
+    
+    # Create cursor
     cursor = db.cursor()
 
     # Create contacts table if it doesn't exist
@@ -29,22 +30,22 @@ try:
         email VARCHAR(255) NOT NULL
     )
     """)
-    logging.info("Checked if contacts table exists (and created it if not).")
+    logging.info("Table 'contacts' checked/created successfully.")
 
     # Insert dummy data
-    dummy_data = [
-        ('John Doe', 'john@example.com'),
-        ('Jane Smith', 'jane@example.com'),
-        ('Alice Johnson', 'alice@example.com')
-    ]
+    cursor.execute("INSERT INTO contacts (name, email) VALUES ('John Doe', 'john@example.com')")
+    cursor.execute("INSERT INTO contacts (name, email) VALUES ('Jane Smith', 'jane@example.com')")
+    logging.info("Dummy data inserted into 'contacts' table.")
 
-    cursor.executemany("INSERT INTO contacts (name, email) VALUES (%s, %s)", dummy_data)
+    # Commit the changes
     db.commit()
-    logging.info("Inserted dummy data into contacts table.")
+    logging.info("Changes committed successfully.")
 
 except mysql.connector.Error as err:
-    logging.error("Error: %s", err)
+    logging.error("Error connecting to MySQL: %s", err)
+
 finally:
+    # Close the cursor and connection
     if db.is_connected():
         cursor.close()
         db.close()
