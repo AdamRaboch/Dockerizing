@@ -1,11 +1,14 @@
-from flask import Flask, render_template, request, redirect
+# data_sql.py
+# Only keep necessary imports, possibly functions
 import os
 import mysql.connector
 import logging
 
-from data_sql import (get_contacts, findByNumber,
-                      check_contact_exist, search_contacts,
-                      create_contact, delete_contact, update_contact_in_db)
+# If data_sql.py is still needed, import from db_functions
+from db_functions import (get_contacts, findByNumber,
+                          check_contact_exist, search_contacts,
+                          create_contact, delete_contact, update_contact_in_db)
+
 
 app = Flask(__name__)
 
