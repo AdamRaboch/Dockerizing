@@ -1,6 +1,9 @@
 # base image of python with OS debian slim (meaning small one)
 FROM python:3.12-slim
 
+# Install MySQL client
+RUN apt-get update && apt-get install -y default-mysql-client && rm -rf /var/lib/apt/lists/*
+
 # set the working directory in the container
 WORKDIR /app
 
