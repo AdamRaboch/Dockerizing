@@ -1,4 +1,3 @@
-# data_sql.py
 import os
 import mysql.connector
 import logging
@@ -26,6 +25,14 @@ if not db_host or db_host == 'localhost':
     logging.error("MySQL host is not set correctly!")
     raise Exception("MySQL host is not set correctly!")
 
+# Function to create the database
+def create_database(cursor):
+    try:
+        cursor.execute("CREATE DATABASE IF NOT EXISTS contacts_app;")
+        logging.info("Database 'contacts_app' created or already exists.")
+    except mysql.connector.Error as err:
+        logging.error("Failed creating database: %s", err)
+
 # Establish MySQL connection
 try:
     # Set up MySQL connection using environment variables
@@ -33,10 +40,16 @@ try:
         host=db_host,
         user=os.getenv("MYSQL_USER"),
         password=os.getenv("MYSQL_PASSWORD"),
-        database=os.getenv("MYSQL_DATABASE"),
         port=os.getenv("MYSQL_PORT", 3306)
     )
     logging.info("Successfully connected to MySQL")
+
+    # Create a cursor and call the function to create the database
+    cursor = db.cursor()
+    create_database(cursor)
+
+    # Select the database to use
+    cursor.execute("USE contacts_app;")
 except mysql.connector.Error as err:
     logging.error("Error connecting to MySQL: %s", err)
     raise
