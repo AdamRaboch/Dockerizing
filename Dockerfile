@@ -11,7 +11,7 @@ ADD . /app
 RUN pip install --no-cache-dir -r requirements.txt
 
 # command to run on container start
-ENTRYPOINT sh -c "
+ENTRYPOINT ["sh", "-c", "
     # Create or clear the log file
     echo '' > /tmp/app.log;
 
@@ -30,4 +30,4 @@ ENTRYPOINT sh -c "
     # Start the Flask app
     echo 'Starting the Flask app...' >> /tmp/app.log;
     python app.py >> /tmp/app.log 2>&1
-"
+"]
