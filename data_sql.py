@@ -42,7 +42,7 @@ try:
         password=os.getenv("MYSQL_PASSWORD"),
         port=os.getenv("MYSQL_PORT", 3306)
     )
-    logging.info("Successfully connected to MySQL")
+    logging.info("Successfully connected to MySQL at %s:%s", db_host, os.getenv("MYSQL_PORT", 3306))
 
     # Create a cursor and call the function to create the database
     cursor = db.cursor()
@@ -50,6 +50,7 @@ try:
 
     # Select the database to use
     cursor.execute("USE contacts_app;")
+    logging.info("Switched to database 'contacts_app'.")
 except mysql.connector.Error as err:
     logging.error("Error connecting to MySQL: %s", err)
     raise
@@ -81,18 +82,22 @@ def createContact():
             file_path = 'static/images/' + fullname + '.jpg'
             photo.save(file_path)
         create_contact(fullname, phone, email, gender, f'{fullname}.jpg')
+        logging.info("Contact created: %s", fullname)
     else:
+        logging.warning("Contact already exists: %s", fullname)
         return render_template('addContactForm.html', message='Contact already exists')
     return redirect('/viewContacts')
 
 @app.route('/deleteContact/<number>')
 def deleteContact(number):
     delete_contact(number)
+    logging.info("Contact deleted: %s", number)
     return redirect('/viewContacts')
 
 @app.route('/editContact/<number>')
 def editContact(number):
     contact = findByNumber(number)
+    logging.info("Editing contact: %s", number)
     return render_template('editContactForm.html', contact=contact)
 
 @app.route('/saveUpdatedContact/<number>', methods=['POST'])
@@ -102,12 +107,14 @@ def saveUpdatedContact(number):
     email = request.form['email']
     gender = request.form['gender']
     update_contact_in_db(number, name, phone, email, gender)
+    logging.info("Contact updated: %s", number)
     return redirect('/viewContacts')
 
 @app.route('/search', methods=['POST'])
 def search():
     search_name = request.form['search_name']
     search_results = search_contacts(search_name)
+    logging.info("Search performed for: %s, results: %s", search_name, search_results)
     return render_template('index.html', contacts=search_results)
 
 if __name__ == '__main__':
