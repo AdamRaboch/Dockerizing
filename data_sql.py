@@ -25,13 +25,38 @@ if not db_host or db_host == 'localhost':
     logging.error("MySQL host is not set correctly!")
     raise Exception("MySQL host is not set correctly!")
 
-# Function to create the database
-def create_database(cursor):
+# Function to create the database and table
+def create_database_and_table(cursor):
     try:
+        # Create database if it doesn't exist
         cursor.execute("CREATE DATABASE IF NOT EXISTS contacts_app;")
         logging.info("Database 'contacts_app' created or already exists.")
+        
+        # Select the created database
+        cursor.execute("USE contacts_app;")
+        logging.info("Switched to database 'contacts_app'.")
+        
+        # Create contacts table if it doesn't exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS contacts (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(255) NOT NULL,
+            email VARCHAR(255) NOT NULL
+        )
+        """)
+        logging.info("Table 'contacts' created or already exists.")
+        
+        # Insert dummy data into the contacts table
+        cursor.execute("""
+        INSERT INTO contacts (name, email)
+        VALUES ('John Doe', 'john.doe@example.com'),
+               ('Jane Smith', 'jane.smith@example.com')
+        """)
+        logging.info("Dummy data inserted into 'contacts' table.")
+        
     except mysql.connector.Error as err:
-        logging.error("Failed creating database: %s", err)
+        logging.error("Failed setting up the database or table: %s", err)
+        raise
 
 # Establish MySQL connection
 try:
@@ -44,17 +69,20 @@ try:
     )
     logging.info("Successfully connected to MySQL at %s:%s", db_host, os.getenv("MYSQL_PORT", 3306))
 
-    # Create a cursor and call the function to create the database
+    # Create a cursor and call the function to create the database and table
     cursor = db.cursor()
-    create_database(cursor)
+    create_database_and_table(cursor)
 
-    # Select the database to use
-    cursor.execute("USE contacts_app;")
-    logging.info("Switched to database 'contacts_app'.")
+    # Commit changes and close the cursor
+    db.commit()
+    cursor.close()
+    logging.info("Database setup completed successfully.")
+
 except mysql.connector.Error as err:
     logging.error("Error connecting to MySQL: %s", err)
     raise
 
+# Flask app routes
 @app.route('/')
 def hello():
     logging.info("Redirecting to /viewContacts")
