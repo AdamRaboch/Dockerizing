@@ -1,7 +1,8 @@
+from flask import Flask, render_template, request, redirect
+import os
 import mysql.connector
 import logging
-import os
-from flask import Flask, render_template, request, redirect
+
 from data_sql import (get_contacts, findByNumber,
                       check_contact_exist, search_contacts,
                       create_contact, delete_contact, update_contact_in_db)
@@ -9,7 +10,7 @@ from data_sql import (get_contacts, findByNumber,
 app = Flask(__name__)
 
 # Configure logging
-logging.basicConfig(filename='/tmp/mysql_connection.log', level=logging.INFO,
+logging.basicConfig(filename='/tmp/app.log', level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Print environment variables for debugging
@@ -22,10 +23,11 @@ logging.info("MYSQL_PORT: %s", os.getenv("MYSQL_PORT", 3306))
 # Ensure MySQL connection uses the right host
 db_host = os.getenv("MYSQL_HOST")
 if not db_host or db_host == 'localhost':
+    logging.error("MySQL host is not set correctly!")
     raise Exception("MySQL host is not set correctly!")
 
-# Set up MySQL connection using environment variables
 try:
+    # Set up MySQL connection using environment variables
     db = mysql.connector.connect(
         host=db_host,
         user=os.getenv("MYSQL_USER"),
@@ -36,6 +38,7 @@ try:
     logging.info("Successfully connected to MySQL")
 except mysql.connector.Error as err:
     logging.error("Error: %s", err)
+    raise
 
 @app.route('/')
 def hello():
@@ -47,7 +50,7 @@ def addContact():
 
 @app.route('/viewContacts')
 def viewContacts():
-    logging.info("Fetching contacts...")
+    logging.info("Fetching contacts")
     contacts = get_contacts()
     logging.info("Contacts fetched: %s", contacts)
     return render_template('index.html', contacts=contacts)
