@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Contacts Table</title>
+    <link rel="stylesheet" href="static/styles.css">
+    
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #d2d2d2;
+            background-color: #f2f2f2;
+        }
+        .contact-image {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="centered-header">Contacts Table</h1>
+    <div id = "searchForm">
+        <!-- search form to filter the results by criteria -->
+        <form action="/search" method="POST">
+            <h2>Search</h2>
+            <label for="search_name">Search by name:</label>
+            <input type="text" name="search_name" placeholder="Search by name">
+            <button type="submit">Search</button>
+        </form>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Number</th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Image</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for contact in contacts %}
+            <tr>
+                <td>{{ contact.number }}</td>
+                <td>{{ contact.name }}</td>
+                <td>{{ contact.phone }}</td>
+                <td>{{ contact.email }}</td>
+                <td><img src="/static/images/{{ contact.photo }}" height="100px"></td>
+                <td>
+                    <a href="/deleteContact/{{contact.number}}"><button>Delete</button></a>
+                    <a href="/editContact/{{contact.number}}">
+                        <button>Edit</button>
+                      </a>
+                </td>
+            </tr>
+            {% endfor %}
+                       
+        </tbody>
+    </table>
+    <button><a href="http://localhost:5000/createContact">Add New Contact</a></button>
+    <button id="addEmptyRow">Add Empty Row</button>
+    <button id="addDaenerys">Add Daenerys</button>
+
+    <script src="static/contacts.js" defer></script>
+</body>
+</html>
