@@ -87,6 +87,10 @@ if setup_database():
         return render_template('index.html')  # assuming you have an index.html template
 
     @app.route('/addContact', methods=['GET', 'POST'])
+    def addContact():
+        return render_template('addContactForm.html')
+    
+    @app.route('/createContact', methods=['GET', 'POST'])
     def createContact():
         if request.method == 'POST':
             fullname = request.form['fullname']
