@@ -1,3 +1,5 @@
+# data_sql.py
+
 import os
 import mysql.connector
 import logging
@@ -65,6 +67,7 @@ try:
         host=db_host,
         user=os.getenv("MYSQL_USER"),
         password=os.getenv("MYSQL_PASSWORD"),
+        database=os.getenv("MYSQL_DATABASE"),  # Added this to switch to the correct database
         port=os.getenv("MYSQL_PORT", 3306)
     )
     logging.info("Successfully connected to MySQL at %s:%s", db_host, os.getenv("MYSQL_PORT", 3306))
@@ -82,7 +85,7 @@ except mysql.connector.Error as err:
     logging.error("Error connecting to MySQL: %s", err)
     raise
 
-# Flask app routes
+# Flask app routes (merged from app.py)
 @app.route('/')
 def hello():
     logging.info("Redirecting to /viewContacts")
