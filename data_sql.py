@@ -1,7 +1,7 @@
 import os
 import mysql.connector
 import logging
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, jsonify  # Import jsonify for JSON response
 from db_functions import (get_contacts, findByNumber,
                           check_contact_exist, search_contacts,
                           create_contact, delete_contact, update_contact_in_db)
@@ -77,6 +77,16 @@ def setup_database():
     except mysql.connector.Error as err:
         logging.error("Error connecting to MySQL or setting up the database: %s", err)
         return False
+
+# New route to view contacts
+@app.route('/viewcontacts', methods=['GET'])
+def view_contacts():
+    try:
+        contacts = get_contacts()  # Assuming this function fetches contacts from the database
+        return jsonify(contacts)  # Return as JSON
+    except Exception as e:
+        logging.error("Error retrieving contacts: %s", e)
+        return jsonify({"error": "Failed to retrieve contacts"}), 500
 
 # Run database setup and only start the Flask app if successful
 if setup_database():
