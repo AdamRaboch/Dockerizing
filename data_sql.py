@@ -1,6 +1,5 @@
-# data_sql.py
-
 import os
+import time
 import mysql.connector
 import logging
 from flask import Flask, render_template, request, redirect
@@ -13,13 +12,6 @@ app = Flask(__name__)
 # Configure logging
 logging.basicConfig(filename='/tmp/app.log', level=logging.DEBUG,
                     format='%(asctime)s - %(levelname)s - %(message)s')
-
-# Print environment variables for debugging
-logging.debug("MYSQL_HOST: %s", os.getenv("MYSQL_HOST"))
-logging.debug("MYSQL_USER: %s", os.getenv("MYSQL_USER"))
-logging.debug("MYSQL_PASSWORD: %s", os.getenv("MYSQL_PASSWORD"))
-logging.debug("MYSQL_DATABASE: %s", os.getenv("MYSQL_DATABASE"))
-logging.debug("MYSQL_PORT: %s", os.getenv("MYSQL_PORT", 3306))
 
 # Ensure MySQL connection uses the right host
 db_host = os.getenv("MYSQL_HOST")
@@ -60,43 +52,58 @@ def create_database_and_table(cursor):
         logging.error("Failed setting up the database or table: %s", err)
         raise
 
-# Establish MySQL connection
+# Function to check if database setup is complete
+def is_database_ready():
+    try:
+        db = mysql.connector.connect(
+            host=db_host,
+            user=os.getenv("MYSQL_USER"),
+            password=os.getenv("MYSQL_PASSWORD"),
+            port=os.getenv("MYSQL_PORT", 3306)
+        )
+        cursor = db.cursor()
+        cursor.execute("USE contacts_app;")
+        cursor.execute("SELECT COUNT(*) FROM contacts;")
+        result = cursor.fetchone()
+        cursor.close()
+        db.close()
+
+        # If there is data in the table, the database is ready
+        return result and result[0] > 0
+
+    except mysql.connector.Error as err:
+        logging.warning("Database is not ready yet: %s", err)
+        return False
+
+# Retry logic to ensure database creation
+while not is_database_ready():
+    logging.info("Waiting for database to be ready...")
+    time.sleep(5)  # Wait 5 seconds before retrying
+
+logging.info("Database setup confirmed, starting Flask app...")
+
+# Establish MySQL connection for Flask app
 try:
-    # Set up MySQL connection using environment variables
     db = mysql.connector.connect(
         host=db_host,
         user=os.getenv("MYSQL_USER"),
         password=os.getenv("MYSQL_PASSWORD"),
-        database=os.getenv("MYSQL_DATABASE"),  # Added this to switch to the correct database
+        database=os.getenv("MYSQL_DATABASE"),
         port=os.getenv("MYSQL_PORT", 3306)
     )
-    logging.info("Successfully connected to MySQL at %s:%s", db_host, os.getenv("MYSQL_PORT", 3306))
-
-    # Create a cursor and call the function to create the database and table
-    cursor = db.cursor()
-    create_database_and_table(cursor)
-
-    # Commit changes and close the cursor
-    db.commit()
-    cursor.close()
-    logging.info("Database setup completed successfully.")
+    logging.info("Successfully connected to MySQL for Flask app.")
 
 except mysql.connector.Error as err:
-    logging.error("Error connecting to MySQL: %s", err)
+    logging.error("Error connecting to MySQL for Flask app: %s", err)
     raise
 
-# Flask app routes (merged from app.py)
+# Flask app routes (unchanged)
 @app.route('/')
 def hello():
-    logging.info("Redirecting to /viewContacts")
     return redirect('/viewContacts')
 
 @app.route('/addContact', methods=['GET', 'POST'])
 def addContact():
-    if request.method == 'POST':
-        logging.info("Received POST request to add contact")
-    else:
-        logging.info("Received GET request to display add contact form")
     return render_template('addContactForm.html')
 
 @app.route('/viewContacts')
@@ -117,24 +124,19 @@ def createContact():
         if photo:
             file_path = 'static/images/' + fullname + '.jpg'
             photo.save(file_path)
-            logging.info("Photo saved for contact: %s", fullname)
         create_contact(fullname, phone, email, gender, f'{fullname}.jpg')
-        logging.info("Contact created: %s", fullname)
     else:
-        logging.warning("Contact already exists: %s", fullname)
         return render_template('addContactForm.html', message='Contact already exists')
     return redirect('/viewContacts')
 
 @app.route('/deleteContact/<number>')
 def deleteContact(number):
     delete_contact(number)
-    logging.info("Contact deleted: %s", number)
     return redirect('/viewContacts')
 
 @app.route('/editContact/<number>')
 def editContact(number):
     contact = findByNumber(number)
-    logging.info("Editing contact: %s", number)
     return render_template('editContactForm.html', contact=contact)
 
 @app.route('/saveUpdatedContact/<number>', methods=['POST'])
@@ -144,14 +146,12 @@ def saveUpdatedContact(number):
     email = request.form['email']
     gender = request.form['gender']
     update_contact_in_db(number, name, phone, email, gender)
-    logging.info("Contact updated: %s", number)
     return redirect('/viewContacts')
 
 @app.route('/search', methods=['POST'])
 def search():
     search_name = request.form['search_name']
     search_results = search_contacts(search_name)
-    logging.info("Search performed for: %s, results count: %d", search_name, len(search_results))
     return render_template('index.html', contacts=search_results)
 
 if __name__ == '__main__':
