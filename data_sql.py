@@ -84,8 +84,7 @@ if setup_database():
 
     @app.route('/')
     def home():
-    return render_template('index.html')  # assuming you have an index.html template
-
+        return render_template('index.html')  # assuming you have an index.html template
 
     @app.route('/createContact', methods=['GET', 'POST'])
     def createContact():
