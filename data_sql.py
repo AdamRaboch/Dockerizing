@@ -84,7 +84,8 @@ if setup_database():
 
     @app.route('/')
     def home():
-        return render_template('index.html')  # assuming you have an index.html template
+        contacts = get_contacts()  # Retrieve contacts from the database
+        return render_template('index.html', contacts=get_contacts())
 
     @app.route('/addContact', methods=['GET', 'POST'])
     def addContact():
@@ -114,7 +115,8 @@ if setup_database():
 
     @app.route('/viewContacts')
     def viewContacts():
-        return render_template('contacts_table.html', contacts=get_contacts())
+        contacts = get_contacts()  # Retrieve contacts from the database
+        return render_template('index.html', contacts=get_contacts())
 
     @app.route('/deleteContact/<int:number>')
     def deleteContact(number):
