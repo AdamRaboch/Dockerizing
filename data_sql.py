@@ -82,6 +82,11 @@ def setup_database():
 if setup_database():
     logging.info("Starting Flask application...")
 
+    @app.route('/')
+    def home():
+    return render_template('index.html')  # assuming you have an index.html template
+
+
     @app.route('/createContact', methods=['GET', 'POST'])
     def createContact():
         if request.method == 'POST':
