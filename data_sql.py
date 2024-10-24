@@ -85,7 +85,7 @@ if setup_database():
     @app.route('/')
     def home():
         contacts = get_contacts()  # Retrieve contacts from the database
-        return render_template('index.html', contacts=get_contacts())
+        return render_template('index.html', contacts=contacts)
 
     @app.route('/addContact', methods=['GET', 'POST'])
     def addContact():
