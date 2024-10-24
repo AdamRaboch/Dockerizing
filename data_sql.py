@@ -120,12 +120,7 @@ if setup_database():
 
     @app.route('/deleteContact/<int:id>')
     def delete_contact_route(id):
-        connection = get_db_connection()
-        cursor = connection.cursor()
-        cursor.execute("DELETE FROM contacts WHERE id = %s", (id,))
-        connection.commit()
-        cursor.close()
-        connection.close()
+        def delete_contact(id);
         return redirect('/viewContacts')  # Redirect to the contacts page after deletion
 
 
