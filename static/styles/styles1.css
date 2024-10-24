@@ -53,6 +53,11 @@ input[type="submit"]:hover {
     opacity: 0.7;
 }
 
+table {
+    color: #DAA520; /* Gold with brown overtone */
+}
+
+
 
 input[type="submit"]:active {
     opacity: 0.4;
