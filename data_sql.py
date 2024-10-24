@@ -120,7 +120,7 @@ if setup_database():
 
     @app.route('/deleteContact/<int:id>')
     def delete_contact_route(id):
-        def delete_contact(id);
+        delete_contact(id);
         return redirect('/viewContacts')  # Redirect to the contacts page after deletion
 
 
