@@ -60,7 +60,7 @@ def create_contact(name, phone, email, gender, photo):
 def delete_contact(number):
     db = get_db_connection()
     cursor = db.cursor()
-    cursor.execute("DELETE FROM contacts WHERE number = %s", (number,))
+    cursor.execute("DELETE FROM contacts WHERE id = %s", (id,))
     db.commit()
     cursor.close()
     db.close()
