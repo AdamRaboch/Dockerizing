@@ -48,8 +48,7 @@ def create_database_and_table(cursor):
         
         cursor.execute("""
         INSERT INTO contacts (name, email, phone)
-        VALUES ('John Doe', 'john.doe@example.com', '1234567890'),
-               ('Jane Smith', 'jane.smith@example.com', '0987654321')
+        VALUES ('Jon Snow', 'jon.snow@nightswatch.com', '1234567890')
         """)
         logging.info("Dummy data inserted into 'contacts' table.")
         
@@ -68,7 +67,7 @@ def setup_database():
         )
         logging.info("Successfully connected to MySQL at %s:%s", db_host, os.getenv("MYSQL_PORT", 3306))
         cursor = db.cursor()
-        create_database_and_table(cursor)
+        #create_database_and_table(cursor)
         db.commit()
         cursor.close()
         db.close()
