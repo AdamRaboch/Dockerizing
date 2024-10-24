@@ -42,11 +42,11 @@
                     <td>{{ contact[4] }}</td> <!-- Assuming 'gender' is the fifth field -->
                     <td><img src="/static/images/{{ contact[5] }}" height="50px"></td> <!-- Assuming 'photo' is the sixth field -->
                     <td>
-                        <a href="/deleteContact/{{ contact[0] }}">
+                        <a href="/deleteContact/{{ contact.id }}">
                            <button>Delete</button>
                         </a>
                         <br/>
-                        <a href="/editContact/{{ contact[0] }}">
+                        <a href="/editContact/{{ contact.id }}">
                            <button>Edit</button>
                         </a>
                     </td>
