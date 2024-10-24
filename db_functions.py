@@ -20,10 +20,10 @@ def get_contacts():
     db.close()
     return result
 
-def findByNumber(number):
+def findByNumber(id):
     db = get_db_connection()
     cursor = db.cursor()
-    cursor.execute("SELECT * FROM contacts WHERE number = %s", (number,))
+    cursor.execute("SELECT * FROM contacts WHERE number = %s", (id,))
     result = cursor.fetchone()
     cursor.close()
     db.close()
