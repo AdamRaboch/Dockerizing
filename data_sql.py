@@ -116,7 +116,7 @@ if setup_database():
     @app.route('/viewContacts')
     def viewContacts():
         contacts = get_contacts()  # Retrieve contacts from the database
-        return render_template('index.html', contacts=get_contacts())
+        return render_template('index.html', contacts=contacts)
 
     @app.route('/deleteContact/<int:id>')
     def delete_contact_route(id):
