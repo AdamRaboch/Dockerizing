@@ -16,8 +16,6 @@ def get_contacts():
     cursor = db.cursor()
     cursor.execute("SELECT * FROM contacts")
     result = cursor.fetchall()
-    cursor.close()
-    db.close()
     return result
 
 def findByNumber(id):
