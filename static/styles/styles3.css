@@ -75,7 +75,7 @@ button:hover {
 
 /* Medieval Touch */
 body {
-    background-image: url("images/medieval_background.png");
+    background-image: url("/static/images/medieval_background.png");
     background-repeat: no-repeat;
     background-size: cover;
 }
