@@ -57,7 +57,7 @@ def create_contact(name, phone, email, gender, photo):
     db.close()
     return "Contact added successfully"
 
-def delete_contact(number):
+def delete_contact(id):
     db = get_db_connection()
     cursor = db.cursor()
     cursor.execute("DELETE FROM contacts WHERE id = %s", (id,))
