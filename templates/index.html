@@ -35,11 +35,11 @@
         <tbody>
             {% for contact in contacts %}
                 <tr>
-                    <td>{{ contact[0] }}</td> <!-- Assuming 'number' is the first field -->
-                    <td>{{ contact[1] }}</td> <!-- Assuming 'name' is the second field -->
-                    <td>{{ contact[2] }}</td> <!-- Assuming 'phone' is the third field -->
-                    <td>{{ contact[3] }}</td> <!-- Assuming 'email' is the fourth field -->
-                    <td>{{ contact[4] }}</td> <!-- Assuming 'gender' is the fifth field -->
+                    <td>{{ contact.id }}</td> <!-- Assuming 'number' is the first field -->
+                    <td>{{ contact.name }}</td> <!-- Assuming 'name' is the second field -->
+                    <td>{{ contact.phone }}</td> <!-- Assuming 'phone' is the third field -->
+                    <td>{{ contact.email }}</td> <!-- Assuming 'email' is the fourth field -->
+                    <td>{{ contact.gender }}</td> <!-- Assuming 'gender' is the fifth field -->
                     <td><img src="/static/images/{{ contact[5] }}" height="50px"></td> <!-- Assuming 'photo' is the sixth field -->
                     <td>
                         <a href="/deleteContact/{{ contact.id }}">
