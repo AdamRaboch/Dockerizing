@@ -6,7 +6,6 @@
     <title>My Contacts</title>
     <link rel="icon" href="Google_Contacts_icon.svg" type="image/png">
     <link rel="stylesheet" href="/static/styles/styles2.css">
-    
 </head>
 <!-- Design a webpage representing a contacts table with
  2-3 pre-populated contacts. Include the following
@@ -20,8 +19,8 @@ As example of contacts you can insert Arja Stark ,
 <body>
     <h1>Contacts Page</h1>
 
-    <div id = "searchForm">
-        <!-- search form to filter the results by criteria -->
+    <div id="searchForm">
+        <!-- Search form to filter the results by criteria -->
         <form action="/search" method="POST">
             <h2>Search</h2>
             <label for="search_name">Search by name:</label>
@@ -30,52 +29,54 @@ As example of contacts you can insert Arja Stark ,
         </form>
     </div>
 
-    
-
     <table>
         <thead>
-           <tr>
-               <th>Number</th> 
-               <th>Name</th>
-               <th>Phone</th>
-               <th>Email</th>
-               <th>Gender</th>
-               <th>Photo</th>
-               <th>Actions</th>
-           </tr>     
+            <tr>
+                <th>ID</th> <!-- Renamed from Number to ID to reflect what is likely being used -->
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Gender</th>
+                <th>Photo</th>
+                <th>Actions</th>
+            </tr>     
         </thead>
         <tbody>
-            {% for contact in contacts:  %}
+            {% for contact in contacts %}
                 <tr>
-                    <td>{{contact.number}}</td>
-                    <td>{{contact.name}}</td>
-                    <td>{{contact.phone}}</td>
-                    <td>{{contact.email}}</td>
-                    <td>{{contact.gender}}</td>
-                    <td><img src="/static/images/{{contact.photo}}"  height="50px"></td>
+                    <td>{{ contact[0] }}</td> <!-- Assuming 'id' is the first field -->
+                    <td>{{ contact[1] }}</td> <!-- Assuming 'name' is the second field -->
+                    <td>{{ contact[2] }}</td> <!-- Assuming 'phone' is the third field -->
+                    <td>{{ contact[3] }}</td> <!-- Assuming 'email' is the fourth field -->
+                    <td>{{ contact[4] }}</td> <!-- Assuming 'gender' is the fifth field -->
+                    <td><img src="/static/images/{{ contact[5] }}" height="50px"></td> <!-- Assuming 'photo' is the sixth field -->
                     <td>
-                        <a href="/deleteContact/{{contact.number}}">
-                           <button>Delete</button>
+                        <a href="/deleteContact/{{ contact[0] }}"> <!-- Using contact[0] for 'id' -->
+                            <button>Delete</button>
                         </a>
                         <br/>
-                        <button>Edit</button>
+                        <!-- Commented out edit button -->
+                        <!-- <a href="/editContact/{{ contact[0] }}">
+                            <button>Edit</button>
+                        </a> -->
                     </td>
                 </tr>        
             {% endfor %}
         </tbody>
     </table>
+    
     <a href="/addContact">
-        <button>Add new contact</button>
+        <button>Add New Contact</button>
     </a>
+
     <div>
-        <button onclick=addEmptyRow()>Add Empty Row</button>
+        <button onclick="addEmptyRow()">Add Empty Row</button>
     </div>
+
     <div>
-        <button onclick=addDeynerysRow()>Add Daenerys Targaryen</button>
+        <button onclick="addDeynerysRow()">Add Daenerys Targaryen</button>
     </div>
+
     <script src="/static/js/index2.js"></script>
 </body>
 </html>
-
-
-</td>
