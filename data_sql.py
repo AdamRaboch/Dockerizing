@@ -129,7 +129,7 @@ if setup_database():
     def search():
         search_name = request.form['search_name']
         search_results = search_contacts(search_name)
-        return render_template('contacts_table.html', contacts=search_results)
+        return render_template('index.html', contacts=search_results)
 
     @app.route('/editContact/<int:number>')
     def editContact(number):
