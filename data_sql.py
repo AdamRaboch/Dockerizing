@@ -118,10 +118,17 @@ if setup_database():
         contacts = get_contacts()  # Retrieve contacts from the database
         return render_template('index.html', contacts=get_contacts())
 
-    @app.route('/deleteContact/<int:number>')
-    def deleteContact(number):
-        delete_contact(number)
-        return redirect('/viewContacts')
+    @app.route('/deleteContact/<int:id>')
+    def delete_contact_route(id):
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        cursor.execute("DELETE FROM contacts WHERE id = %s", (id,))
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return redirect('/viewContacts')  # Redirect to the contacts page after deletion
+
+
 
     @app.route('/search', methods=['POST'])
     def search():
