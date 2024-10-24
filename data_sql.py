@@ -67,7 +67,7 @@ def setup_database():
         )
         logging.info("Successfully connected to MySQL at %s:%s", db_host, os.getenv("MYSQL_PORT", 3306))
         cursor = db.cursor()
-        #create_database_and_table(cursor)
+        create_database_and_table(cursor)
         db.commit()
         cursor.close()
         db.close()
