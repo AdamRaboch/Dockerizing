@@ -12,8 +12,7 @@ function addEmptyRow() {
                         <td></td>   
                         <td></td> 
                         <td></td> 
-                        <td><button onclick=deleteRow(this)>Delete</button> <br/>
-                            <button>Edit</button></td>`
+                        <td><button onclick=deleteRow(this)>Delete</button> <br/>`
     table.appendChild(newRow)                        
 }
 
@@ -28,7 +27,6 @@ function addDeynerysRow() {
                         <td>
                             <img src="/static/images/daenerys.jpg" height="50px">
                         </td> 
-                        <td><button onclick=deleteRow(this)>Delete</button> <br/>
-                            <button>Edit</button></td>`
+                        <td><button onclick=deleteRow(this)>Delete</button> <br/>`
     table.appendChild(newRow)                        
 }
